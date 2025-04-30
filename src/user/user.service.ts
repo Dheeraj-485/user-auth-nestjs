@@ -27,7 +27,12 @@ export class UserService {
       if (findEMail) {
         throw new ConflictException('email already registered');
       }
-
+      const findUserName = await this.userRepository.findOne({
+        where: { username: user.username },
+      });
+      if (findUserName) {
+        throw new ConflictException('username already registered');
+      }
       const salt = await bcrypt.genSalt();
       user.password = await bcrypt.hash(createUserDto.password, salt);
 
@@ -65,6 +70,7 @@ export class UserService {
     if (!existingUser) {
       throw new NotFoundException(`User with id ${id} not found`);
     }
+
     try {
       await this.userRepository.update(id, UpdateUserDto);
       return { ...existingUser, ...UpdateUserDto };
