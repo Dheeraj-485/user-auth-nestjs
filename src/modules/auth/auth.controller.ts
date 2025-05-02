@@ -11,17 +11,23 @@ import {
   Put,
   ForbiddenException,
   ParseIntPipe,
+  UseFilters,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
-import { RoleGuard } from '../guards/role.guard';
-import { CONSTANTS } from '../utils/constants';
-import { UserService } from 'src/user/user.service';
-import { CreateUserDto } from 'src/user/dto/create-user.dto';
-import { UpdateUserDto } from 'src/user/dto/update-user.dto';
-import { JwtAuthGuard } from '../guards/auth.guard';
+import { RoleGuard } from '../../guards/role.guard';
+import { CONSTANTS } from '../../utils/constants';
+import { UserService } from 'src/modules/user/user.service';
+import { CreateUserDto } from 'src/modules/user/dto/create-user.dto';
+import { UpdateUserDto } from 'src/modules/user/dto/update-user.dto';
+import { JwtAuthGuard } from '../../guards/auth.guard';
+import { GlobalException } from 'src/exceptions/http-exception.filter';
+// import { HttpExceptionFilter } from 'src/exceptions/http-exception.filter';
 
 @Controller('auth')
+// HTTP-based exceptions handler
+// we can even declare it on `update user Id` like this @UseFilters(HttpExceptionFilter, IdExceptionFilter)
+// @UseFilters(GlobalException)
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
@@ -44,7 +50,7 @@ export class AuthController {
     };
   }
   @Get('me')
-  @UseGuards(AuthGuard('jwt'))
+  // @UseGuards(AuthGuard('jwt'))
   getProfile(@Request() req) {
     return req.user;
   }
